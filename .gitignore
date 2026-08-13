@@ -1,0 +1,17 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform.lock.hcl
+
+# Terraform CLI / credentials
+*.tfrc
+credentials.tfrc.json
+
+# macOS
+.DS_Store
+
+# Temporary
+*.tar.gz
+*.log

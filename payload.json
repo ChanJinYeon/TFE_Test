@@ -1,0 +1,19 @@
+{
+  "data": {
+    "type": "policy-sets",
+    "attributes": {
+      "name": "cost-estimation-policy-set",
+      "description": "Cost Estimation Sentinel Test",
+      "kind": "sentinel",
+      "global": false,
+      "agent-enabled": false
+    },
+    "relationships": {
+      "workspaces": {
+        "data": [
+          { "id": "ws-nBAhpHvVrDDHUhYh", "type": "workspaces" }
+        ]
+      }
+    }
+  }
+}

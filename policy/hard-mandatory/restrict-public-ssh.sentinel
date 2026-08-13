@@ -1,0 +1,31 @@
+import "tfplan/v2" as tfplan
+
+
+# Terraform Plan에서 생성 또는 수정되는 Security Group Ingress Rule만 추출
+ingress_rules = filter tfplan.resource_changes as _, rc {
+    rc.mode is "managed" and    # managed - resource block / data - data block
+    rc.type is "aws_vpc_security_group_ingress_rule" and    # resource type
+    
+    # `terraform plan`에서 리소스를 새로 생성하거나 수정하는 리소스를 필터링
+    # https://developer.hashicorp.com/sentinel/docs/features/terraform/tfplan-v2#change-representation
+
+    (   rc.change.actions contains "create" or
+        rc.change.actions contains "update" )
+}
+
+
+# TCP 22(SSH)를 0.0.0.0/0에 공개한 Rule 탐지
+# after: 생성되거나 수정된 리소스 기준
+public_ssh_rules = filter ingress_rules as _, ingress {
+    ingress.change.after is not null and
+    ingress.change.after.ip_protocol is "tcp" and
+    ingress.change.after.cidr_ipv4 is "0.0.0.0/0" and
+    ingress.change.after.from_port <= 22 and
+    ingress.change.after.to_port >= 22
+}
+
+
+# rule에 걸린 게 있다면 False
+main = rule {
+    length(public_ssh_rules) is 0
+}

@@ -1,0 +1,29 @@
+# https://developer.hashicorp.com/terraform/enterprise/workspaces/cost-estimation?utm_source=chatgpt.com
+# https://developer.hashicorp.com/terraform/enterprise/workspaces/policy-enforcement/manage-policy-sets/configure?utm_source=chatgpt.com
+# https://developer.hashicorp.com/terraform/enterprise/workspaces/policy-enforcement/manage-policy-sets?utm_source=chatgpt.com
+import "tfrun"
+import "decimal"    # 비용값 문자열 -> 정확한 금액 비교를 위해 import
+
+
+max_monthly_increase = decimal.new(50)
+
+
+# TFE Cost Estimation 결과
+prior_monthly_cost = decimal.new(tfrun.cost_estimate.prior_monthly_cost)
+proposed_monthly_cost = decimal.new(tfrun.cost_estimate.proposed_monthly_cost)
+delta_monthly_cost = decimal.new(tfrun.cost_estimate.delta_monthly_cost)
+
+
+print("======================================")
+print("TFE Cost Policy")
+print("======================================")
+print("Prior Monthly Cost    : $", prior_monthly_cost)
+print("Proposed Monthly Cost : $", proposed_monthly_cost)
+print("Delta Monthly Cost    : $", delta_monthly_cost)
+print("Allowed Increase      : $", max_monthly_increase)
+print("======================================")
+
+
+main = rule {
+    delta_monthly_cost.less_than_or_equals(max_monthly_increase)
+}
